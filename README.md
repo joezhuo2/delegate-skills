@@ -27,6 +27,20 @@ Claude Code plugin marketplace:
 /plugin install delegate-skills@delegate-skills
 ```
 
+## Disable parts
+
+State lives in `~/.claude/delegate-skills.json`; each gate checks it first and blocks while its part is disabled.
+
+```bash
+delegate-skills disable codex    # no Codex/OpenAI delegation
+delegate-skills disable kiro     # no Kiro delegation
+delegate-skills disable all
+delegate-skills enable codex
+delegate-skills status
+```
+
+Inside Claude Code (works for plugin installs too): `/delegate disable codex`, `/delegate enable kiro`, `/delegate status`.
+
 ## Requirements
 
 - Codex: the Codex desktop app (ships `~/.codex/.sandbox-bin/codex.exe`), signed in.

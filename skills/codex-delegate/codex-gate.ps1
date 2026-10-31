@@ -4,6 +4,10 @@ $home_ = Join-Path $env:USERPROFILE '.codex'
 
 function Block($why) { Write-Output "GATE_BLOCKED: $why"; exit 1 }
 
+$cfg = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $env:USERPROFILE '.claude' }
+$state = Get-Content (Join-Path $cfg 'delegate-skills.json') -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json
+if ($state.disabled -contains 'codex') { Block 'codex disabled by user (delegate-skills enable codex)' }
+
 $auth = Get-Content (Join-Path $home_ 'auth.json') -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json
 if (-not $auth.tokens.id_token) { Block 'not logged in to Codex' }
 $seg = $auth.tokens.id_token.Split('.')[1].Replace('-', '+').Replace('_', '/')
