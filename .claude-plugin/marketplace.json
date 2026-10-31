@@ -1,0 +1,12 @@
+{
+  "name": "delegate-skills",
+  "owner": { "name": "joezhuo2" },
+  "plugins": [
+    {
+      "name": "delegate-skills",
+      "source": "./",
+      "description": "Delegate light/medium tasks to Codex CLI and Kiro CLI (Claude Opus/Sonnet/Haiku), gated on plan and usage.",
+      "version": "0.1.0"
+    }
+  ]
+}

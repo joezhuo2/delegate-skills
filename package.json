@@ -1,0 +1,13 @@
+{
+  "name": "delegate-skills",
+  "version": "0.1.0",
+  "description": "Claude Code skills that delegate light/medium tasks to Codex CLI and Kiro CLI (Claude Opus/Sonnet/Haiku), gated on plan and usage.",
+  "license": "MIT",
+  "bin": { "delegate-skills": "bin/cli.js" },
+  "scripts": { "postinstall": "node scripts/postinstall.js" },
+  "files": ["bin", "scripts", "skills", ".claude-plugin", "README.md", "LICENSE"],
+  "os": ["win32"],
+  "engines": { "node": ">=18" },
+  "keywords": ["claude-code", "skill", "codex", "kiro", "subagent"],
+  "repository": { "type": "git", "url": "git+https://github.com/joezhuo2/delegate-skills.git" }
+}
