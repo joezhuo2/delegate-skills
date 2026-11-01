@@ -13,11 +13,18 @@ Windows only for now (PowerShell 5.1+ scripts).
 
 ## Install
 
-npm (copies the skills into `~/.claude/skills`):
+npm, straight from GitHub (not on the npm registry yet). Copies the skills and `/delegate` command into `~/.claude`:
 
 ```bash
-npm i -g delegate-skills
+npm i -g github:joezhuo2/delegate-skills
+delegate-skills install
 delegate-skills uninstall   # to remove
+```
+
+Or one-off, no global install:
+
+```bash
+npx github:joezhuo2/delegate-skills install
 ```
 
 Claude Code plugin marketplace:
