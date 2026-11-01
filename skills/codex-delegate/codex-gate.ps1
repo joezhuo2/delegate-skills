@@ -42,3 +42,4 @@ else {
 }
 
 Write-Output "GATE_OK plan=$plan $($report -join ' ')"
+exit 0
