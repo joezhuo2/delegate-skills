@@ -49,4 +49,4 @@ Inside Claude Code (works for plugin installs too): `/delegate disable codex`, `
 ## Status
 
 - Codex gate and runner: tested (gate blocks correctly; runner reaches Codex).
-- Kiro runner: untested end to end. Model listing parse and the read-only tool id (`fs_read`) need a logged-in CLI to confirm.
+- Kiro runner: tested read-only on `haiku`, `sonnet` and `opus` (resolved to the 5.5 models from `--list-models`). `-Write` mode (`--trust-all-tools`) is untested.

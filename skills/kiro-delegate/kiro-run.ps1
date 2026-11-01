@@ -13,7 +13,7 @@ $kiro = ($gate -replace '^.*kiro=(.*?) whoami=.*$', '$1')
 
 if (-not $Model) {
     $listing = & $kiro chat --list-models 2>&1 | Out-String
-    $best = [regex]::Matches($listing, "(?im)^.*\b(?<id>[\w.\-]*$Tier[\w.\-]*)") |
+    $best = [regex]::Matches($listing, "(?im)^[\s*]*(?<id>claude-$Tier[\w.\-]*)") |
         ForEach-Object {
             $v = [regex]::Match($_.Groups['id'].Value, '(\d+(?:[.\-]\d+)*)').Groups[1].Value -replace '-', '.'
             [pscustomobject]@{ Id = $_.Groups['id'].Value; Ver = if ($v) { [version]($v + $(if ($v -notmatch '\.') { '.0' })) } else { [version]'0.0' } }
@@ -30,6 +30,7 @@ Set-Content $inFile $Prompt -NoNewline -Encoding utf8
 $trust = if ($Write) { '--trust-all-tools' } else { '--trust-tools=fs_read' }
 $cliArgs = @('chat', '--no-interactive', '--model', $Model, $trust, '--wrap', 'never')
 $p = Start-Process $kiro -ArgumentList $cliArgs -WorkingDirectory $Cwd -RedirectStandardInput $inFile -RedirectStandardOutput $stdout -RedirectStandardError $stderr -NoNewWindow -PassThru
+$null = $p.Handle
 
 try {
     if (-not $p.WaitForExit($TimeoutSec * 1000)) {

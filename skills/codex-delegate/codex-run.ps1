@@ -20,6 +20,7 @@ Set-Content $inFile $Prompt -NoNewline -Encoding utf8
 
 $cliArgs = @('exec', '-m', $Model, '-c', 'model_reasoning_effort="medium"', '-C', $Cwd, '-s', $sandbox, '--skip-git-repo-check', '--ephemeral', '--color', 'never', '-o', $outFile, '-')
 $p = Start-Process $codex -ArgumentList $cliArgs -RedirectStandardInput $inFile -RedirectStandardOutput $stdout -RedirectStandardError $stderr -NoNewWindow -PassThru
+$null = $p.Handle
 
 try {
     if (-not $p.WaitForExit($TimeoutSec * 1000)) {
