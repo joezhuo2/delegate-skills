@@ -1,6 +1,6 @@
 # delegate-skills
 
-Claude Code skills that let Claude hand light/medium, self-contained tasks to other coding agents, then review the result.
+Claude Code skills that let Claude hand light/medium, self-contained tasks to other AI coding agents, then review the result.
 
 | Skill | Worker | Gate |
 |-------|--------|------|
