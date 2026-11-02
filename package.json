@@ -1,6 +1,6 @@
 {
   "name": "delegate-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Claude Code skills that delegate light/medium tasks to Codex CLI and Kiro CLI (Claude Opus/Sonnet/Haiku), gated on plan and usage.",
   "license": "MIT",
   "bin": { "delegate-skills": "bin/cli.js" },

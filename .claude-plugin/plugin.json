@@ -1,7 +1,7 @@
 {
   "name": "delegate-skills",
   "description": "Delegate light/medium tasks to Codex CLI and Kiro CLI (Claude Opus/Sonnet/Haiku), gated on plan and usage.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "joezhuo2" },
   "license": "MIT",
   "repository": "https://github.com/joezhuo2/delegate-skills"
