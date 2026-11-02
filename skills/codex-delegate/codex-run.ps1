@@ -7,7 +7,7 @@ param(
 )
 
 & (Join-Path $PSScriptRoot 'codex-gate.ps1')
-if ($LASTEXITCODE -ne 0) { exit 3 }
+if ($LASTEXITCODE -ne 0) { Write-Output "CODEX_GATE_EXIT=$LASTEXITCODE"; exit 3 }
 
 $codex = Join-Path $env:USERPROFILE '.codex\.sandbox-bin\codex.exe'
 if (-not (Test-Path $codex)) { Write-Error "codex.exe not found at $codex"; exit 2 }
