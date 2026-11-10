@@ -31,6 +31,9 @@ jobs:
           $env:CLAUDE_CONFIG_DIR = Join-Path $env:RUNNER_TEMP 'claude'
           node bin/cli.js install
           if (-not (Test-Path "$env:CLAUDE_CONFIG_DIR/skills/codex-delegate/SKILL.md")) { throw 'install did not copy skills' }
+          if (-not (Test-Path "$env:CLAUDE_CONFIG_DIR/delegate-skills/level.js")) { throw 'install did not copy level hook' }
+          node bin/cli.js ultra
+          if (-not ((node hooks/level.js) -match 'level: ultra')) { throw 'level hook did not report ultra' }
           node bin/cli.js disable codex
           node bin/cli.js status
           node bin/cli.js uninstall

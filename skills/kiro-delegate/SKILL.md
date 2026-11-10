@@ -1,11 +1,19 @@
 ---
 name: kiro-delegate
-description: Delegate a self-contained task to Kiro CLI running Claude Opus, Sonnet or Haiku 5.5, as an extra worker beside normal subagents. Use when a task is well-specified, bounded, and can run headless (implementation, tests, docs, reviews, research), and the Kiro CLI is installed and logged in.
+description: Delegate a self-contained task to Kiro CLI running Claude Opus, Sonnet or Haiku 5.5, as an extra worker beside normal subagents. Use when a task is well-specified, bounded, and can run headless (implementation, tests, docs, reviews, research), and the Kiro CLI is installed and logged in. Follow the delegate-skills level (low, medium, ultra) given in session context.
 ---
 
 # kiro-delegate
 
 Run `kiro-cli chat --no-interactive` as a worker. Claude stays orchestrator and reviewer.
+
+## Delegation level
+
+Set with `/delegate low|medium|ultra` (default `medium`); a SessionStart hook prints the saved level into each session.
+
+- `low`: delegate only when the user explicitly asks.
+- `medium`: delegate when the task fits the rules below.
+- `ultra`: prefer delegating over Claude subagents and over doing the work yourself. Delegate anything a worker can do; keep orchestration, review and work no worker can do. Fall back only when gates block or the worker fails.
 
 ## Gate (automatic)
 

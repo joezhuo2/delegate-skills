@@ -1,11 +1,19 @@
 ---
 name: codex-delegate
-description: Delegate light/medium self-contained tasks (boilerplate, tests, docs, small refactors, single-feature edits, code review, research) to OpenAI Codex via headless `codex exec`. Use when a task is well-specified, bounded to a few files, and does not need this conversation's context. Skip for architecture, subtle bugs, or anything needing back-and-forth.
+description: Delegate light/medium self-contained tasks (boilerplate, tests, docs, small refactors, single-feature edits, code review, research) to OpenAI Codex via headless `codex exec`. Use when a task is well-specified, bounded to a few files, and does not need this conversation's context. Skip for architecture, subtle bugs, or anything needing back-and-forth. Follow the delegate-skills level (low, medium, ultra) given in session context.
 ---
 
 # codex-delegate
 
 Offload bounded work to Codex. Claude stays orchestrator and reviewer.
+
+## Delegation level
+
+Set with `/delegate low|medium|ultra` (default `medium`); a SessionStart hook prints the saved level into each session.
+
+- `low`: delegate only when the user explicitly asks.
+- `medium`: delegate when the task fits the rules below.
+- `ultra`: prefer delegating over Claude subagents and over doing the work yourself. Delegate anything a worker can do; keep orchestration, review and work no worker can do. Fall back only when gates block or the worker fails.
 
 ## When to delegate
 
