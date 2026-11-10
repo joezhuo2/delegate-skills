@@ -13,10 +13,10 @@ Windows only for now (PowerShell 5.1+ scripts).
 
 ## Install
 
-npm, straight from GitHub (not on the npm registry yet). Copies the skills and `/delegate` command into `~/.claude`:
+From npm. Copies the skills and `/delegate` command into `~/.claude`:
 
 ```bash
-npm i -g github:joezhuo2/delegate-skills
+npm i -g delegate-skills
 delegate-skills install
 delegate-skills uninstall   # to remove
 ```
@@ -24,8 +24,10 @@ delegate-skills uninstall   # to remove
 Or one-off, no global install:
 
 ```bash
-npx github:joezhuo2/delegate-skills install
+npx delegate-skills install
 ```
+
+To upgrade: `npm i -g delegate-skills@latest`, then `delegate-skills install` again.
 
 Claude Code plugin marketplace:
 
@@ -50,7 +52,7 @@ Inside Claude Code (works for plugin installs too): `/delegate disable codex`, `
 
 ## Requirements
 
-- Codex: the Codex desktop app (ships `~/.codex/.sandbox-bin/codex.exe`), signed in.
+- Codex: the Codex desktop app, signed in. The runner uses the newest `codex.exe` under `%LOCALAPPDATA%\OpenAI\Codex\bin`, falling back to `~/.codex/.sandbox-bin/codex.exe`.
 - Kiro: install the Windows MSI from `https://prod.download.cli.kiro.dev/stable/latest/manifest.json` (verify the sha256), then run `kiro-cli login`.
 
 ## Status
