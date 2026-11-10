@@ -1,3 +1,5 @@
+<h1 align="center">delegate-skills</h1>
+
 <p align="center">
   <a href="https://www.npmjs.com/package/delegate-skills"><img src="https://img.shields.io/npm/v/delegate-skills?logo=npm&color=orange" alt="npm"></a>
   <a href="https://www.npmjs.com/package/delegate-skills"><img src="https://img.shields.io/npm/dt/delegate-skills?logo=npm&color=blue" alt="downloads"></a>
