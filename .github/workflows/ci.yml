@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $bad = 0
+          Get-ChildItem skills -Recurse -Filter *.ps1 | ForEach-Object {
+            $errs = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$errs) | Out-Null
+            if ($errs) { $errs | ForEach-Object { Write-Error "$($_.Extent.File):$($_.Extent.StartLineNumber) $($_.Message)" }; $bad++ }
+          }
+          if ($bad) { exit 1 }
+      - name: CLI smoke test
+        shell: pwsh
+        run: |
+          node --check bin/cli.js
+          $env:CLAUDE_CONFIG_DIR = Join-Path $env:RUNNER_TEMP 'claude'
+          node bin/cli.js install
+          if (-not (Test-Path "$env:CLAUDE_CONFIG_DIR/skills/codex-delegate/SKILL.md")) { throw 'install did not copy skills' }
+          node bin/cli.js disable codex
+          node bin/cli.js status
+          node bin/cli.js uninstall
+      - name: Versions match
+        shell: pwsh
+        run: |
+          $v = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $p = (Get-Content .claude-plugin/plugin.json -Raw | ConvertFrom-Json).version
+          if ($v -ne $p) { throw "package.json $v != plugin.json $p" }
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$v") { throw "tag $env:GITHUB_REF_NAME != v$v" }
+          if (-not (Select-String -Path CHANGELOG.md -Pattern "^## $([regex]::Escape($v))$" -Quiet)) { throw "CHANGELOG.md has no '## $v' section" }
+      - run: npm pack --dry-run
+
+  release:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          awk -v v="## ${TAG#v}" '$0==v{f=1;next} /^## /{f=0} f' CHANGELOG.md > notes.md
+          npm pack
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --notes-file notes.md
+            gh release upload "$TAG" delegate-skills-*.tgz --clobber
+          else
+            gh release create "$TAG" delegate-skills-*.tgz --title "$TAG" --notes-file notes.md --verify-tag
+          fi
