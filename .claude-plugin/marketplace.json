@@ -6,7 +6,7 @@
       "name": "delegate-skills",
       "source": "./",
       "description": "Delegate light/medium tasks to Codex, Kiro, Gemini, Qwen Code and Copilot CLIs, gated on plan and usage.",
-      "version": "0.1.3"
+      "version": "0.1.4"
     }
   ]
 }

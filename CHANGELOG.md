@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+- New workers: `gemini-delegate` (Gemini CLI), `qwen-delegate` (Qwen Code) and `copilot-delegate` (GitHub Copilot CLI). Each runs headless, read-only by default, `-Write` to allow edits; uses the CLI's default model unless `-Model <id>` is passed (#1).
+- `delegate-skills enable|disable` and `/delegate` accept `gemini`, `qwen`, `copilot`; the level hook lists only enabled workers.
+- README documents the new workers.
+
 ## 0.1.3
 
 - Delegation levels: `/delegate low|medium|ultra` (and `delegate-skills low|medium|ultra`). low delegates only on request, medium when appropriate (default), ultra prefers workers over Claude subagents and Claude itself.
