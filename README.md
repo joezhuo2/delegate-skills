@@ -235,8 +235,8 @@ Bump the version in `package.json`, `.claude-plugin/plugin.json` and
 push a tag:
 
 ```bash
-git tag v0.1.4
-git push origin v0.1.4
+git tag v0.1.5
+git push origin v0.1.5
 ```
 
 When CI passes on the tag, it creates (or updates) the GitHub release with the
