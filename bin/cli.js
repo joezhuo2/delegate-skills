@@ -8,7 +8,7 @@ const cfg = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const dest = path.join(cfg, 'skills');
 const stateFile = path.join(cfg, 'delegate-skills.json');
 const names = fs.readdirSync(src);
-const parts = { codex: 'codex-delegate', kiro: 'kiro-delegate' };
+const parts = { codex: 'codex-delegate', kiro: 'kiro-delegate', gemini: 'gemini-delegate', qwen: 'qwen-delegate', copilot: 'copilot-delegate' };
 
 const readState = () => {
   try { return JSON.parse(fs.readFileSync(stateFile, 'utf8')); } catch { return { disabled: [] }; }
@@ -20,7 +20,7 @@ const writeState = (s) => {
 const targets = (arg) => {
   if (arg === 'all') return Object.keys(parts);
   if (parts[arg]) return [arg];
-  console.error(`unknown part '${arg}'; use codex, kiro or all`);
+  console.error(`unknown part '${arg}'; use codex, kiro, gemini, qwen, copilot or all`);
   process.exit(1);
 };
 
@@ -84,6 +84,6 @@ if (cmd === 'install') {
   console.log(`level: ${levels.includes(s.level) ? s.level : 'medium'}`);
   for (const t of Object.keys(parts)) console.log(`${t}: ${off.includes(t) ? 'disabled' : 'enabled'}`);
 } else {
-  console.error('usage: delegate-skills [install|uninstall|low|medium|ultra|enable <codex|kiro|all>|disable <codex|kiro|all>|status]');
+  console.error('usage: delegate-skills [install|uninstall|low|medium|ultra|enable <part|all>|disable <part|all>|status]');
   process.exit(1);
 }

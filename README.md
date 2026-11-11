@@ -17,7 +17,8 @@
 </p>
 
 > delegate-skills is a set of Claude Code skills that let Claude hand
-> self-contained tasks to other AI coding agents (Codex CLI and Kiro CLI),
+> self-contained tasks to other AI coding agents (Codex, Kiro, Gemini CLI,
+> Qwen Code and GitHub Copilot CLI),
 > then review what they did. A delegation level decides how eagerly Claude
 > hands work off, from only when you ask to almost everything.
 
@@ -56,8 +57,14 @@ Use one method, not both: with both, each session gets the level message twice.
 - **Kiro:** install the Windows MSI listed in
   `https://prod.download.cli.kiro.dev/stable/latest/manifest.json` (check the
   sha256), then run `kiro-cli login`.
+- **Gemini:** `npm i -g @google/gemini-cli`, then run `gemini` once and sign
+  in (Google login or `GEMINI_API_KEY`).
+- **Qwen Code:** `npm i -g @qwen-code/qwen-code`, then run `qwen` once and
+  sign in or pick an auth type.
+- **Copilot:** `npm i -g @github/copilot`, then run `copilot` and `/login`
+  (needs a Copilot plan).
 
-You only need the worker(s) you plan to use; disable the other.
+You only need the worker(s) you plan to use; disable the others.
 
 ### Updates
 
@@ -88,8 +95,12 @@ npm rm -g delegate-skills
 | --- | --- | --- |
 | `codex-delegate` | Codex CLI (`gpt-6.1-sol` or `gpt-6-astra`, medium effort) | ChatGPT **plus** plan, 5h and weekly usage under 95% |
 | `kiro-delegate` | Kiro CLI (Claude Opus / Sonnet / Haiku, newest available) | CLI installed and logged in |
+| `gemini-delegate` | Gemini CLI (its default model) | CLI installed |
+| `qwen-delegate` | Qwen Code (its default model) | CLI installed |
+| `copilot-delegate` | GitHub Copilot CLI (its default model) | CLI installed |
 
-Claude picks the model per task, writes a self-contained prompt, runs the
+For Gemini, Qwen and Copilot the CLI's default model is used unless Claude
+passes `-Model <id>`. Claude picks the model per task, writes a self-contained prompt, runs the
 worker headless, then reads the diff and re-runs the verify command itself.
 Workers never commit; Claude owns commits.
 
@@ -115,7 +126,9 @@ Each worker runs behind a gate script that blocks before the worker starts:
 - **Codex:** blocks unless the login is on the plus plan and neither the 5h nor
   the weekly window is at 95% or more.
 - **Kiro:** blocks if `kiro-cli` is missing or not logged in.
-- **Both:** block while that part is disabled.
+- **Gemini, Qwen, Copilot:** block if the CLI is missing. A missing sign-in
+  or exhausted quota shows up after the run as `<CLI>_AUTH` or `<CLI>_LIMIT`.
+- **All:** block while that part is disabled.
 
 On a block, Claude does the task itself or with a normal subagent.
 
@@ -123,7 +136,10 @@ On a block, Claude does the task itself or with a normal subagent.
 
 Workers run read-only unless Claude passes `-Write`. Codex then gets a
 `workspace-write` sandbox limited to the project folder; Kiro gets
-`--trust-all-tools`, so it is only used on a git repo Claude can diff.
+`--trust-all-tools`, Gemini and Qwen get `--approval-mode yolo`, and Copilot
+gets `--allow-all`, so those are only used on a git repo Claude can diff.
+Read-only runs use Kiro `--trust-tools=fs_read`, Gemini and Qwen
+`--approval-mode plan`, and Copilot with write and shell tools denied.
 
 ## Commands
 
@@ -134,7 +150,7 @@ Inside Claude Code (plugin and npm installs):
 | `/delegate low` | Delegate only on request |
 | `/delegate medium` | Delegate when appropriate (default) |
 | `/delegate ultra` | Delegate over subagents and Claude itself |
-| `/delegate disable codex` | Stop Codex delegation (`kiro`, `all` also work) |
+| `/delegate disable codex` | Stop Codex delegation (`kiro`, `gemini`, `qwen`, `copilot`, `all` also work) |
 | `/delegate enable kiro` | Turn a part back on |
 | `/delegate status` | Show level and parts |
 
@@ -142,7 +158,7 @@ From a terminal (npm installs):
 
 ```bash
 delegate-skills ultra            # or low, medium
-delegate-skills disable codex    # or kiro, all
+delegate-skills disable codex    # or kiro, gemini, qwen, copilot, all
 delegate-skills enable codex
 delegate-skills status
 ```
@@ -152,7 +168,7 @@ delegate-skills status
 | What | Where |
 | --- | --- |
 | Level and disabled parts | `~/.claude/delegate-skills.json` |
-| Skills | `~/.claude/skills/codex-delegate/`, `~/.claude/skills/kiro-delegate/` |
+| Skills | `~/.claude/skills/<part>-delegate/` (codex, kiro, gemini, qwen, copilot) |
 | `/delegate` command | `~/.claude/commands/delegate.md` |
 | SessionStart hook script | `~/.claude/delegate-skills/level.js` |
 | Hook entry | `hooks.SessionStart` in `~/.claude/settings.json` |
@@ -171,6 +187,9 @@ hooks/hooks.json           plugin hook registration
 commands/delegate.md       /delegate slash command
 skills/codex-delegate/     SKILL.md, codex-gate.ps1, codex-run.ps1
 skills/kiro-delegate/      SKILL.md, kiro-gate.ps1, kiro-run.ps1
+skills/gemini-delegate/    SKILL.md, gemini-gate.ps1, gemini-run.ps1
+skills/qwen-delegate/      SKILL.md, qwen-gate.ps1, qwen-run.ps1
+skills/copilot-delegate/   SKILL.md, copilot-gate.ps1, copilot-run.ps1
 .claude-plugin/            plugin and marketplace manifests
 ```
 
@@ -193,8 +212,8 @@ Bump the version in `package.json`, `.claude-plugin/plugin.json` and
 push a tag:
 
 ```bash
-git tag v0.1.3
-git push origin v0.1.3
+git tag v0.1.4
+git push origin v0.1.4
 ```
 
 When CI passes on the tag, it creates (or updates) the GitHub release with the
