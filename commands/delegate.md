@@ -1,11 +1,11 @@
 ---
-description: Set delegation level or enable/disable Codex/Kiro delegation (usage: /delegate low | medium | ultra | disable codex | enable kiro | disable all | status)
-argument-hint: <low|medium|ultra|enable|disable|status> [codex|kiro|all]
+description: Set delegation level or enable/disable Codex/Kiro/Gemini/Qwen/Copilot delegation (usage: /delegate low | medium | ultra | disable codex | enable kiro | disable all | status)
+argument-hint: <low|medium|ultra|enable|disable|status> [codex|kiro|gemini|qwen|copilot|all]
 ---
 
 Manage `delegate-skills`. Arguments: $ARGUMENTS
 
-State file: `$CLAUDE_CONFIG_DIR/delegate-skills.json` (default `~/.claude/delegate-skills.json`), shape `{"level": "medium", "disabled": ["codex", "kiro"]}`. Valid parts: `codex`, `kiro`, `all` (both).
+State file: `$CLAUDE_CONFIG_DIR/delegate-skills.json` (default `~/.claude/delegate-skills.json`), shape `{"level": "medium", "disabled": ["codex", "kiro"]}`. Valid parts: `codex`, `kiro`, `gemini`, `qwen`, `copilot`, `all` (every part).
 
 - `low` / `medium` / `ultra`: set `level`.
 - `disable <part>`: add the part(s) to `disabled`, creating the file if missing.
