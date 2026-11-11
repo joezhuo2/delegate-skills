@@ -8,7 +8,7 @@ const cfg = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const dest = path.join(cfg, 'skills');
 const stateFile = path.join(cfg, 'delegate-skills.json');
 const names = fs.readdirSync(src);
-const parts = { codex: 'codex-delegate', kiro: 'kiro-delegate', gemini: 'gemini-delegate', qwen: 'qwen-delegate', copilot: 'copilot-delegate' };
+const parts = { codex: 'codex-delegate', kiro: 'kiro-delegate', gemini: 'gemini-delegate', qwen: 'qwen-delegate', copilot: 'copilot-delegate', claude: 'claude-delegate' };
 
 const readState = () => {
   try { return JSON.parse(fs.readFileSync(stateFile, 'utf8')); } catch { return { disabled: [] }; }
@@ -20,7 +20,7 @@ const writeState = (s) => {
 const targets = (arg) => {
   if (arg === 'all') return Object.keys(parts);
   if (parts[arg]) return [arg];
-  console.error(`unknown part '${arg}'; use codex, kiro, gemini, qwen, copilot or all`);
+  console.error(`unknown part '${arg}'; use codex, kiro, gemini, qwen, copilot, claude or all`);
   process.exit(1);
 };
 

@@ -13,7 +13,7 @@ Set with `/delegate low|medium|ultra` (default `medium`); a SessionStart hook pr
 
 - `low`: delegate only when the user explicitly asks.
 - `medium`: delegate when the task fits the rules below.
-- `ultra`: prefer delegating over Claude subagents and over doing the work yourself. Delegate anything a worker can do; keep orchestration, review and work no worker can do. Fall back only when gates block or the worker fails.
+- `ultra`: prefer delegating over doing the work yourself; while the `claude` part is enabled, choose between this worker and a Claude subagent per task (see `claude-delegate`), otherwise prefer this worker over Claude subagents. Delegate anything a worker can do; keep orchestration, review and work no worker can do. Fall back only when gates block or the worker fails.
 
 ## When to delegate
 

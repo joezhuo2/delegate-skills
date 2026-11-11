@@ -20,7 +20,8 @@
 
 > delegate-skills is a set of Claude Code skills that let Claude hand
 > self-contained tasks to other AI coding agents (Codex, Kiro, Gemini CLI,
-> Qwen Code and GitHub Copilot CLI),
+> Qwen Code and GitHub Copilot CLI)
+> or to its own subagents on the Claude model that fits the task,
 > then review what they did. A delegation level decides how eagerly Claude
 > hands work off, from only when you ask to almost everything.
 
@@ -65,6 +66,7 @@ Use one method, not both: with both, each session gets the level message twice.
   sign in or pick an auth type.
 - **Copilot:** `npm i -g @github/copilot`, then run `copilot` and `/login`
   (needs a Copilot plan).
+- **Claude:** nothing to install; uses Claude Code's own subagents.
 
 You only need the worker(s) you plan to use; disable the others.
 
@@ -100,11 +102,28 @@ npm rm -g delegate-skills
 | `gemini-delegate` | Gemini CLI (its default model) | CLI installed |
 | `qwen-delegate` | Qwen Code (its default model) | CLI installed |
 | `copilot-delegate` | GitHub Copilot CLI (its default model) | CLI installed |
+| `claude-delegate` | Claude subagents (Haiku / Sonnet / Opus / Fable) | None; off while disabled |
 
 For Gemini, Qwen and Copilot the CLI's default model is used unless Claude
 passes `-Model <id>`. Claude picks the model per task, writes a self-contained prompt, runs the
 worker headless, then reads the diff and re-runs the verify command itself.
 Workers never commit; Claude owns commits.
+
+### Claude model routing
+
+`claude-delegate` makes the main Claude session the orchestrator. Per task it
+chooses between an external worker and a Claude subagent, and runs the
+subagent on the cheapest model that fits, going up one tier after a failure:
+
+| Model | Gets |
+| --- | --- |
+| Haiku | Boilerplate, docs, version bumps, formatting, mechanical single-file edits |
+| Sonnet | Medium features with a clear spec, multi-file fixes, test suites, small reviews |
+| Opus | Large features, cross-module refactors, architecture, subtle bugs |
+| Fable | The hardest work only: cross-repo architecture, root-cause debugging, tasks Opus failed |
+
+Tasks that need the conversation's context stay with Claude subagents;
+self-contained, verifiable ones can go to an external worker.
 
 ### Delegation levels
 
@@ -112,11 +131,12 @@ Workers never commit; Claude owns commits.
 | --- | --- |
 | `low` | Only when you explicitly ask it to |
 | `medium` (default) | When a task fits the skill's rules: bounded, few files, verifiable |
-| `ultra` | Instead of Claude subagents and instead of doing the work itself, whenever a worker can do it |
+| `ultra` | Instead of doing the work itself, whenever a worker can do it |
 
 On `ultra`, Claude keeps only orchestration, review of worker output and work
-no worker can do, and falls back to subagents or itself only when every gate
-blocks or the worker fails.
+no worker can do, and falls back to itself only when every gate blocks or the
+worker fails. With the `claude` part disabled, `ultra` also prefers external
+workers over Claude subagents.
 
 A SessionStart hook reads the saved level and tells each new session. A level
 set with `/delegate` also applies to the current session.
@@ -151,8 +171,8 @@ Inside Claude Code (plugin and npm installs):
 | --- | --- |
 | `/delegate low` | Delegate only on request |
 | `/delegate medium` | Delegate when appropriate (default) |
-| `/delegate ultra` | Delegate over subagents and Claude itself |
-| `/delegate disable codex` | Stop Codex delegation (`kiro`, `gemini`, `qwen`, `copilot`, `all` also work) |
+| `/delegate ultra` | Delegate instead of Claude doing the work itself |
+| `/delegate disable codex` | Stop Codex delegation (`kiro`, `gemini`, `qwen`, `copilot`, `claude`, `all` also work) |
 | `/delegate enable kiro` | Turn a part back on |
 | `/delegate status` | Show level and parts |
 
@@ -160,7 +180,7 @@ From a terminal (npm installs):
 
 ```bash
 delegate-skills ultra            # or low, medium
-delegate-skills disable codex    # or kiro, gemini, qwen, copilot, all
+delegate-skills disable codex    # or kiro, gemini, qwen, copilot, claude, all
 delegate-skills enable codex
 delegate-skills status
 ```
@@ -170,7 +190,7 @@ delegate-skills status
 | What | Where |
 | --- | --- |
 | Level and disabled parts | `~/.claude/delegate-skills.json` |
-| Skills | `~/.claude/skills/<part>-delegate/` (codex, kiro, gemini, qwen, copilot) |
+| Skills | `~/.claude/skills/<part>-delegate/` (codex, kiro, gemini, qwen, copilot, claude) |
 | `/delegate` command | `~/.claude/commands/delegate.md` |
 | SessionStart hook script | `~/.claude/delegate-skills/level.js` |
 | Hook entry | `hooks.SessionStart` in `~/.claude/settings.json` |
@@ -192,6 +212,7 @@ skills/kiro-delegate/      SKILL.md, kiro-gate.ps1, kiro-run.ps1
 skills/gemini-delegate/    SKILL.md, gemini-gate.ps1, gemini-run.ps1
 skills/qwen-delegate/      SKILL.md, qwen-gate.ps1, qwen-run.ps1
 skills/copilot-delegate/   SKILL.md, copilot-gate.ps1, copilot-run.ps1
+skills/claude-delegate/    SKILL.md (worker choice and Claude model routing)
 .claude-plugin/            plugin and marketplace manifests
 ```
 

@@ -1,7 +1,7 @@
 {
   "name": "delegate-skills",
   "version": "0.1.4",
-  "description": "Claude Code skills that delegate light/medium tasks to Codex, Kiro, Gemini, Qwen Code and Copilot CLIs, gated on plan and usage.",
+  "description": "Claude Code skills that delegate light/medium tasks to Codex, Kiro, Gemini, Qwen Code and Copilot CLIs, or to Claude subagents on the model that fits, gated on plan and usage.",
   "license": "MIT",
   "bin": { "delegate-skills": "bin/cli.js" },
   "files": ["bin", "skills", "commands", "hooks", ".claude-plugin", "README.md", "LICENSE"],

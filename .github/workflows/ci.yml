@@ -38,6 +38,10 @@ jobs:
           node bin/cli.js disable codex
           node bin/cli.js disable qwen
           if (-not ((node hooks/level.js) -match 'enabled: kiro, gemini, copilot')) { throw 'level hook did not drop disabled parts' }
+          if (-not (Test-Path "$env:CLAUDE_CONFIG_DIR/skills/claude-delegate/SKILL.md")) { throw 'install did not copy claude-delegate' }
+          if (-not ((node hooks/level.js) -match 'copilot, claude')) { throw 'level hook did not list claude' }
+          node bin/cli.js disable claude
+          if ((node hooks/level.js) -match 'copilot, claude|orchestrator') { throw 'level hook did not drop claude' }
           node bin/cli.js status
           node bin/cli.js uninstall
       - name: Versions match
